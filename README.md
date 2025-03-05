@@ -71,7 +71,7 @@ Inside the `variables.tf` or in `*.tfvars` file, you should define values for th
 In your main Terraform configuration file (e.g., main.tf), you can use the module. Specify the source of the module, and version, For Example
 
 ```hcl
-module "pipelines" {
+module "bedrock_agents" {
   source = "sourcefuse/arc-bedrock/aws"
   version = "0.0.1"
 
