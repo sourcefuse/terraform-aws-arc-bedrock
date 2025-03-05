@@ -66,18 +66,13 @@ module "collaborators" {
   source   = "./modules/collaborator"
   for_each = { for idx, collaborator in local.agent_collaborator : collaborator.name => collaborator }
 
-  name                        = each.value.name
-  collaborator_agent_id       = aws_bedrockagent_agent.collaborator[each.key].agent_id
-  collaborator_name           = each.value.collaborator_name
-  foundation_model            = each.value.foundation_model
-  supervisor_agent_id         = each.value.supervisor_agent_id == null ? aws_bedrockagent_agent.this[0].agent_id : each.value.supervisor_agent_id
-  instruction                 = each.value.instruction
-  collaboration_instruction   = each.value.collaboration_instruction
-  alias_name                  = each.value.alias_name
-  description                 = each.value.description
-  relay_conversation_history  = each.value.relay_conversation_history
-  prepare_agent               = each.value.prepare_agent
-  idle_session_ttl_in_seconds = each.value.idle_session_ttl_in_seconds
+  collaborator_agent_id      = aws_bedrockagent_agent.collaborator[each.key].agent_id
+  collaborator_name          = each.value.collaborator_name
+  supervisor_agent_id        = each.value.supervisor_agent_id == null ? aws_bedrockagent_agent.this[0].agent_id : each.value.supervisor_agent_id
+  collaboration_instruction  = each.value.collaboration_instruction
+  alias_name                 = each.value.alias_name
+  description                = each.value.description
+  relay_conversation_history = each.value.relay_conversation_history
 
   action_groups = each.value.action_groups
 

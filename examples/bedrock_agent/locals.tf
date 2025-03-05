@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 locals {
 
   collaborators = [
@@ -35,7 +37,7 @@ locals {
     state                      = "ENABLED"
     agent_version              = "DRAFT"
     skip_resource_in_use_check = true
-    action_group_executor      = { lambda = "arn:aws:lambda:us-east-1:884360309640:function:arc-debug-budgets-default" }
+    action_group_executor      = { lambda = "arn:aws:lambda:us-east-1:${data.aws_caller_identity.current.account_id}:function:arc-debug-budgets-default" }
 
     function_schema = [
       {

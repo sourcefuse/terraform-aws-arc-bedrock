@@ -135,9 +135,9 @@ Inside the `.tfvars` file of the module, you can provide desired values that can
 
 Edit the [locals.tf](./examples/bedrock_agent/locals.tf) file and provide desired values.  
 
-`collaborators` -  List of Colloborator Agents
+`collaborators` -  List of Collaborator Agents
 
-`action_groups` - Action groups for Colloborator Agents
+`action_groups` - Action groups for Collaborator Agents
 
 ```hcl
 locals {

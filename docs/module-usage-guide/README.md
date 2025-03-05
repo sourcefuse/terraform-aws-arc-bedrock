@@ -16,7 +16,7 @@ Before using this module, ensure you have the following:
 
 - AWS credentials configured.
 - Terraform installed.
-- A working knowledge of AWS Aurora cluster and SQL Server RDS instance.
+- A working knowledge of AWS Bedrock Agent
 
 ## Getting Started
 
@@ -25,7 +25,7 @@ Before using this module, ensure you have the following:
 To use the module in your Terraform configuration, include the following source block:
 
 ```hcl
-module "aurora" {
+module "bedrock_agent" {
   source = "sourcefuse/arc-bedrock/aws"
   version = "0.0.1"
   # insert the required variables here
@@ -48,7 +48,7 @@ Integrate the module with your existing Terraform mono repo configuration, follo
 
 ### Required AWS Permissions
 
-Ensure that the AWS credentials used to execute Terraform have the necessary permissions to create Aurora cluster and SQL Server RDS instance.
+Ensure that the AWS credentials used to execute Terraform have the necessary permissions to create Bedrock Agent
 
 ## Module Configuration
 
@@ -97,9 +97,7 @@ If you encounter a bug or issue, please report it on the [GitHub repository](htt
 
 ## Security Considerations
 
-### AWS VPC
-
-Understand the security considerations related to Aurora database cluster and Amazon RDS instance for SQL Server on AWS when using this module.
+Understand the security considerations related to Bedrock Agents
 
 ## Contributing and Community Support
 
