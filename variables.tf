@@ -35,32 +35,6 @@ variable "bedrock_agent_config" {
   }
 }
 
-variable "action_groups" {
-  type = list(object({
-    name                       = string
-    state                      = string
-    agent_version              = string
-    skip_resource_in_use_check = optional(bool, true)
-    action_group_executor      = object({ lambda = string })
-    function_schema = list(object({
-      functions = list(object({
-        name        = string
-        description = string
-        parameters = list(object({
-          map_block_key = string
-          type          = string
-          description   = string
-          required      = bool
-        }))
-      }))
-    }))
-
-  }))
-  description = "List of configurations for AWS Bedrock Agent Action Groups."
-  default     = []
-}
-
-
 variable "agent_collaborator" {
   type = object({
     name                        = string
