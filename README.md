@@ -55,7 +55,7 @@ Initially, it's essential to define a Terraform module, which is organized as a 
 
 
 ```plaintext
-billing/
+bedrock-agent/
 |-- main.tf
 |-- variables.tf
 |-- outputs.tf
@@ -370,7 +370,7 @@ By specifying this , it will bump the version and if you dont specify this in yo
 
 ```sh
 cd test
-go mod init github.com/sourcefuse/terraform-aws-ref-arch-db
+go mod init github.com/sourcefuse/terraform-aws-arc-bedrock
 go get github.com/gruntwork-io/terratest/modules/terraform
 ```
 
