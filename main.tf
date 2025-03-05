@@ -12,7 +12,7 @@ resource "aws_iam_role_policy" "this" {
 }
 
 resource "aws_iam_role" "collaborator" {
-  for_each = { for idx, collaborator in [var.agent_collaborator] : collaborator.name => collaborator }
+  for_each = { for idx, collaborator in local.agent_collaborator : collaborator.name => collaborator }
 
   assume_role_policy = data.aws_iam_policy_document.agent_trust.json
   name               = "${each.key}-collaborator-role"
@@ -20,7 +20,7 @@ resource "aws_iam_role" "collaborator" {
 }
 
 resource "aws_iam_role_policy" "collaborator" {
-  for_each = { for idx, collaborator in [var.agent_collaborator] : collaborator.name => collaborator }
+  for_each = { for idx, collaborator in local.agent_collaborator : collaborator.name => collaborator }
 
   policy = data.aws_iam_policy_document.collaborator_agent_permissions.json
   role   = aws_iam_role.collaborator[each.key].id
@@ -47,7 +47,7 @@ resource "aws_bedrockagent_agent" "this" {
 }
 
 resource "aws_bedrockagent_agent" "collaborator" {
-  for_each = { for idx, collaborator in [var.agent_collaborator] : collaborator.name => collaborator }
+  for_each = { for idx, collaborator in local.agent_collaborator : collaborator.name => collaborator }
 
   agent_name                  = each.value.name
   description                 = each.value.description
@@ -64,7 +64,7 @@ resource "aws_bedrockagent_agent" "collaborator" {
 // │ in Preparing state. Retry the request when the agent is in a valid state.
 module "collaborators" {
   source   = "./modules/collaborator"
-  for_each = { for idx, collaborator in [var.agent_collaborator] : collaborator.name => collaborator }
+  for_each = { for idx, collaborator in local.agent_collaborator : collaborator.name => collaborator }
 
   name                        = each.value.name
   collaborator_agent_id       = aws_bedrockagent_agent.collaborator[each.key].agent_id
