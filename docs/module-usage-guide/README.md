@@ -1,10 +1,10 @@
-# Terraform AWS ARC DB Module Usage Guide
+# Terraform AWS ARC Bedrock Module Usage Guide
 
 ## Introduction
 
 ### Purpose of the Document
 
-This document provides guidelines and instructions for users looking to implement Terraform module for managing Aurora cluster and SQL Server RDS instance.
+This document provides guidelines and instructions for users looking to implement Terraform module for Bedrock agents
 
 ### Module Overview
 
