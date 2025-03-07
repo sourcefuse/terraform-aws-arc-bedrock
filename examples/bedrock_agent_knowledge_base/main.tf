@@ -21,7 +21,7 @@ provider "aws" {
 }
 
 provider "opensearch" {
-  url         = module.opensearch_serverless.opensearch_serverless_collection_id
+  url         = module.opensearch_serverless.opensearch_collection_endpoint
   healthcheck = false
 }
 
@@ -43,7 +43,7 @@ module "tags" {
 # ##################################################
 module "opensearch_serverless" {
   source  = "sourcefuse/arc-opensearch/aws"
-  version = "1.0.4"
+  version = "1.0.5"
 
   enable_serverless           = true
   type                        = "VECTORSEARCH"
@@ -74,6 +74,7 @@ module "bedrock_agent" {
 
   tags = module.tags.tags
 
+  depends_on = [module.opensearch_serverless]
 }
 
 // Role : AmazonBedrockExecutionRoleForKnowledgeBase_amoig

@@ -1,3 +1,4 @@
+data "aws_caller_identity" "current" {}
 locals {
   name = "${var.namespace}-${var.environment}-opensearch"
 
@@ -7,13 +8,13 @@ locals {
       resource_type = "collection"
       resource      = ["collection/${local.name}"]
       permissions   = ["aoss:CreateCollectionItems", "aoss:DeleteCollectionItems", "aoss:UpdateCollectionItems", "aoss:DescribeCollectionItems"]
-      //principal = []
+      principal     = [data.aws_caller_identity.current.arn]
     },
     {
       resource_type = "index"
       resource      = ["index/${local.name}/*"]
       permissions   = ["aoss:UpdateIndex", "aoss:DescribeIndex", "aoss:ReadDocument", "aoss:WriteDocument", "aoss:CreateIndex"]
-      // principal = []
+      principal     = [data.aws_caller_identity.current.arn]
     }
   ]
 
@@ -32,7 +33,7 @@ locals {
   knowledge_base_config = {
     create           = true
     name             = "arc-dev-knowledge-base"
-    foundation_model = "anthropic.claude-3-5-sonnet-20241022-v2:0"
+    foundation_model = "amazon.titan-embed-text-v2:0"
     description      = "A knowledge base for AI-driven search"
 
     data_storage_list = [
@@ -55,6 +56,7 @@ locals {
       type = "OPENSEARCH_SERVERLESS"
       opensearch_serverless_configuration = {
         create                      = true
+        collection_arn              = module.opensearch_serverless.opensearch_serverless_collection_arn
         access_policy_rules         = []
         data_lifecycle_policy_rules = []
 

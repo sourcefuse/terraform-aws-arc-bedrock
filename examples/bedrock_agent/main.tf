@@ -9,11 +9,20 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 5.0, < 6.0"
     }
+    opensearch = {
+      source  = "opensearch-project/opensearch"
+      version = "2.3.1"
+    }
   }
 }
 
 provider "aws" {
   region = var.region
+}
+
+provider "opensearch" {
+  url         = "null"
+  healthcheck = false
 }
 
 module "tags" {

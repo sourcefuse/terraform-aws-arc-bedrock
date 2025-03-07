@@ -56,7 +56,7 @@ resource "aws_bedrockagent_knowledge_base" "this" {
   role_arn = aws_iam_role.this[0].arn
   knowledge_base_configuration {
     vector_knowledge_base_configuration {
-      embedding_model_arn = "arn:aws:bedrock:${data.aws_region.current.name}}::foundation-model/${var.knowledge_base_config.foundation_model}"
+      embedding_model_arn = "arn:aws:bedrock:${data.aws_region.current.name}::foundation-model/${var.knowledge_base_config.foundation_model}"
 
       embedding_model_configuration {
         bedrock_embedding_model_configuration {
@@ -89,7 +89,7 @@ resource "aws_bedrockagent_knowledge_base" "this" {
     type = "OPENSEARCH_SERVERLESS"
     opensearch_serverless_configuration {
       collection_arn    = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.collection_arn
-      vector_index_name = "Sdfsd"
+      vector_index_name = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.vector_index_name
       field_mapping {
         vector_field   = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.field_mapping.vector_field
         text_field     = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.field_mapping.text_field

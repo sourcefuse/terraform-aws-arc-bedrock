@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "bedrock_invoke_model" {
       "bedrock:InvokeModel"
     ]
     resources = [
-      "arn:aws:bedrock:${data.aws_region.current.name}}::foundation-model/${var.knowledge_base_config.foundation_model}"
+      "arn:aws:bedrock:${data.aws_region.current.name}::foundation-model/${var.knowledge_base_config.foundation_model}"
     ]
   }
 }
