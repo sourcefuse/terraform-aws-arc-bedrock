@@ -8,7 +8,7 @@ resource "aws_bedrockagent_agent_action_group" "this" {
   skip_resource_in_use_check = each.value.skip_resource_in_use_check
 
   action_group_executor {
-    lambda = each.value.action_group_executor.lambda
+    lambda = data.aws_lambda_function.this[each.key].arn
   }
 
   function_schema {
@@ -34,4 +34,31 @@ resource "aws_bedrockagent_agent_action_group" "this" {
       }
     }
   }
+}
+
+locals {
+  lambda_permissions = [
+    for ag in var.action_groups :
+    {
+      group_name  = ag.name
+      lambda_name = ag.action_group_executor.lambda.name
+    }
+    if ag.action_group_executor.lambda != null && ag.action_group_executor.lambda.add_permission
+  ]
+}
+
+data "aws_lambda_function" "this" {
+  for_each = { for lambda in local.lambda_permissions : lambda.group_name => lambda }
+
+  function_name = each.value.lambda_name
+}
+
+resource "aws_lambda_permission" "bedrock_agent_permission" {
+  for_each = { for lambda in local.lambda_permissions : lambda.group_name => lambda }
+
+  statement_id  = "${each.key}-AllowBedrockAgentInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = each.value.lambda_name
+  principal     = "bedrock.amazonaws.com"
+  source_arn    = var.collaborator_agent_arn
 }

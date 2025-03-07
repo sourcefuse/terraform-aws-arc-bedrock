@@ -41,6 +41,7 @@ module "bedrock_agent" {
     agent_collaboration = "SUPERVISOR"
     prepare_agent       = false
     description         = "Supervisor agent"
+    //alias_name          = "arc-bedrock-agent-alias"
   }
   agent_collaborator = {
     name                        = "collab-1"
@@ -60,7 +61,8 @@ module "bedrock_agent" {
 }
 
 module "collaborator_agent_1" {
-  source   = "../../"
+  source = "../../"
+
   for_each = { for idx, collaborator in local.collaborators : collaborator.name => collaborator }
 
   agent_collaborator = each.value

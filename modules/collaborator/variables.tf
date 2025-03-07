@@ -36,6 +36,11 @@ variable "collaborator_agent_id" {
   description = "Collaborator agent id"
 }
 
+variable "collaborator_agent_arn" {
+  type        = string
+  description = "Collaborator agent arn"
+}
+
 variable "tags" {
   type        = map(string)
   description = "Tags for Bedrock resources"
@@ -50,7 +55,10 @@ variable "action_groups" {
     skip_resource_in_use_check = optional(bool, true)
     action_group_executor = object(
       {
-        lambda         = optional(string, null)
+        lambda = optional(object({
+          name           = string
+          add_permission = optional(bool, true)
+        }))
         custom_control = optional(string, null)
     })
     function_schema = list(object({

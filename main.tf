@@ -46,6 +46,15 @@ resource "aws_bedrockagent_agent" "this" {
   depends_on = [aws_bedrockagent_agent.collaborator]
 }
 
+resource "aws_bedrockagent_agent_alias" "this" {
+  count = var.bedrock_agent_config.create && var.bedrock_agent_config.alias_name != null ? 1 : 0
+
+  agent_alias_name = var.bedrock_agent_config.alias_name
+  agent_id         = aws_bedrockagent_agent.this[0].agent_id
+  description      = var.bedrock_agent_config.alias_description
+  tags             = var.tags
+}
+
 resource "aws_bedrockagent_agent" "collaborator" {
   for_each = { for idx, collaborator in local.agent_collaborator : collaborator.name => collaborator }
 
@@ -67,6 +76,7 @@ module "collaborators" {
   for_each = { for idx, collaborator in local.agent_collaborator : collaborator.name => collaborator }
 
   collaborator_agent_id      = aws_bedrockagent_agent.collaborator[each.key].agent_id
+  collaborator_agent_arn     = aws_bedrockagent_agent.collaborator[each.key].agent_arn
   collaborator_name          = each.value.collaborator_name
   supervisor_agent_id        = each.value.supervisor_agent_id == null ? aws_bedrockagent_agent.this[0].agent_id : each.value.supervisor_agent_id
   collaboration_instruction  = each.value.collaboration_instruction
@@ -79,4 +89,13 @@ module "collaborators" {
   tags = var.tags
 
   depends_on = [aws_bedrockagent_agent.this, aws_bedrockagent_agent.collaborator]
+}
+
+module "knowledge_base" {
+  source = "./modules/knowledge-base"
+
+  count = var.knowledge_base_config.create ? 1 : 0
+
+  knowledge_base_config = var.knowledge_base_config
+  tags                  = var.tags
 }

@@ -3,6 +3,8 @@ resource "aws_bedrockagent_agent_alias" "this" {
   agent_id         = var.collaborator_agent_id
   description      = var.description
   tags             = var.tags
+
+  depends_on = [aws_bedrockagent_agent_action_group.this]
 }
 
 resource "aws_bedrockagent_agent_collaborator" "this" {

@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 locals {
 
   collaborators = [
@@ -29,6 +27,7 @@ locals {
       relay_conversation_history  = "TO_COLLABORATOR"
       prepare_agent               = true
       idle_session_ttl_in_seconds = 600
+      action_groups               = local.action_groups_2
     }
   ]
 
@@ -37,7 +36,11 @@ locals {
     state                      = "ENABLED"
     agent_version              = "DRAFT"
     skip_resource_in_use_check = true
-    action_group_executor      = { lambda = "arn:aws:lambda:us-east-1:${data.aws_caller_identity.current.account_id}:function:arc-debug-budgets-default" }
+    action_group_executor = { lambda = {
+      name           = "arc-debug-budgets-default"
+      add_permission = true
+      }
+    }
 
     function_schema = [
       {
@@ -82,5 +85,62 @@ locals {
       }
     ]
   }]
+
+  action_groups_2 = [{
+    name                       = "singlerulegenerationagent-actiongroup-2"
+    state                      = "ENABLED"
+    agent_version              = "DRAFT"
+    skip_resource_in_use_check = true
+    action_group_executor = { lambda = {
+      name           = "arc-debug-budgets-default"
+      add_permission = true
+      }
+    }
+
+    function_schema = [
+      {
+        functions = [
+          {
+            name        = "extract_general_props"
+            description = "Extracts general info properties based on the user prompt."
+            parameters = [
+              {
+                map_block_key = "prompt"
+                type          = "string"
+                description   = "The user instruction/prompt to create or edit the rule."
+                required      = true
+              },
+              {
+                map_block_key = "rule_context"
+                type          = "string"
+                description   = "The existing rule to be updated, if provided."
+                required      = false
+              }
+            ]
+          },
+          {
+            name        = "extract_static_props"
+            description = "Extracts static properties based on the user prompt."
+            parameters = [
+              {
+                map_block_key = "prompt"
+                type          = "string"
+                description   = "The user instruction/prompt to create or edit the rule."
+                required      = true
+              },
+              {
+                map_block_key = "rule_context"
+                type          = "string"
+                description   = "The existing rule to be updated, if provided."
+                required      = false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }]
+
+
 
 }
