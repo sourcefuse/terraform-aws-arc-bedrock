@@ -21,7 +21,7 @@ provider "aws" {
 }
 
 provider "opensearch" {
-  url         = module.opensearch_serverless.opensearch_collection_endpoint
+  url         = module.bedrock_agent.opensearch_collection_endpoint
   healthcheck = false
 }
 
@@ -37,29 +37,12 @@ module "tags" {
   }
 }
 
-
-# ##################################################
-# ######## OpenSearch Serverless Domain  ###########
-# ##################################################
-module "opensearch_serverless" {
-  source  = "sourcefuse/arc-opensearch/aws"
-  version = "1.0.5"
-
-  enable_serverless           = true
-  type                        = "VECTORSEARCH"
-  namespace                   = var.namespace
-  environment                 = var.environment
-  name                        = local.name
-  enable_public_access        = true
-  data_lifecycle_policy_rules = local.data_lifecycle_policy_rules
-  access_policy_rules         = local.access_policy_rules
-  use_standby_replicas        = false
-  tags                        = module.tags.tags
-}
-
 // This created Bedrock Superviset Agent and a Colloborator Agent
 module "bedrock_agent" {
   source = "../../"
+
+  namespace   = "arc"
+  environment = "dev"
 
   bedrock_agent_config = {
     create           = true
@@ -73,8 +56,6 @@ module "bedrock_agent" {
   knowledge_base_config = local.knowledge_base_config
 
   tags = module.tags.tags
-
-  depends_on = [module.opensearch_serverless]
 }
 
 // Role : AmazonBedrockExecutionRoleForKnowledgeBase_amoig

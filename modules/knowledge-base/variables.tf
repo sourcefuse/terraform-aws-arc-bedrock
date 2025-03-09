@@ -1,3 +1,13 @@
+variable "environment" {
+  type        = string
+  description = "Name of the environment, i.e. dev, stage, prod"
+}
+
+variable "namespace" {
+  type        = string
+  description = "Namespace of the project, i.e. arc"
+}
+
 variable "tags" {
   type        = map(string)
   description = "Tags for Bedrock resources"
@@ -6,11 +16,21 @@ variable "tags" {
 
 variable "knowledge_base_config" {
   type = object({
-    create           = optional(bool, false)
-    name             = string
-    role_arn         = optional(string, null)
-    foundation_model = string
-    description      = optional(string, null)
+    create               = optional(bool, false)
+    name                 = string
+    role_arn             = optional(string, null)
+    foundation_model_arn = string
+    description          = optional(string, null)
+    agent_id             = string
+    instruction          = string
+    data_source_list = list(object({
+      type = optional(string, "S3")
+      s3_config = optional(object({
+        create             = optional(bool, false)
+        name               = string
+        inclusion_prefixes = optional(list(string), [])
+      }))
+    }))
     data_storage_list = list(object({
       type = optional(string, "S3")
       s3_config = optional(object({
@@ -27,6 +47,7 @@ variable "knowledge_base_config" {
       type = optional(string, "OPENSEARCH_SERVERLESS")
       opensearch_serverless_configuration = object({
         create                      = optional(bool, false)
+        name                        = optional(string, null)
         collection_arn              = optional(string, null)
         access_policy_rules         = optional(list(any), [])
         data_lifecycle_policy_rules = optional(list(any), [])

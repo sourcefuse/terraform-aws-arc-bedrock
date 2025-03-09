@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "bedrock_invoke_model" {
       "bedrock:InvokeModel"
     ]
     resources = [
-      "arn:aws:bedrock:${data.aws_region.current.name}::foundation-model/${var.knowledge_base_config.foundation_model}"
+      var.knowledge_base_config.foundation_model_arn
     ]
   }
 }
@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "opensearch_serverless_api" {
       "aoss:APIAccessAll"
     ]
     resources = [
-      var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.collection_arn
+      module.opensearch_serverless[0].opensearch_serverless_collection_arn
     ]
   }
 }

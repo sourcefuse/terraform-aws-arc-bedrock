@@ -3,10 +3,31 @@
 ##################################################
 
 locals {
-  s3_list = { for idx, obj in var.knowledge_base_config.data_storage_list : obj.s3_config.name => {
+  s3_list = { for idx, obj in var.knowledge_base_config.data_source_list : obj.s3_config.name => {
     name = obj.s3_config.name
     }
   if obj.type == "S3" && obj.s3_config.create }
+}
+
+# ##################################################
+# ######## OpenSearch Serverless Domain  ###########
+# ##################################################
+module "opensearch_serverless" {
+  source  = "sourcefuse/arc-opensearch/aws"
+  version = "1.0.5"
+
+  count = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.create ? 1 : 0
+
+  enable_serverless           = true
+  type                        = "VECTORSEARCH"
+  namespace                   = var.namespace
+  environment                 = var.environment
+  name                        = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.name
+  enable_public_access        = true
+  data_lifecycle_policy_rules = local.data_lifecycle_policy_rules
+  access_policy_rules         = local.access_policy_rules
+  use_standby_replicas        = false
+  tags                        = var.tags
 }
 
 module "s3" {
@@ -30,4 +51,5 @@ resource "opensearch_index" "this" {
   index_knn_algo_param_ef_search = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.index_config.index_knn_algo_param_ef_search
   mappings                       = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.index_config.mappings == null ? local.opensearch_index_mapping : var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.index_config.mappings
   force_destroy                  = true
+  depends_on                     = [module.opensearch_serverless]
 }

@@ -32,3 +32,8 @@ output "alias_id" {
   description = "Unique identifier of the alias."
   value       = var.bedrock_agent_config.create && var.bedrock_agent_config.alias_name != null ? aws_bedrockagent_agent_alias.this[0].agent_alias_id : 0
 }
+
+output "opensearch_collection_endpoint" {
+  value       = var.knowledge_base_config.create ? module.knowledge_base[0].opensearch_collection_endpoint : null
+  description = "Opensearch Collection endpoint"
+}

@@ -1,3 +1,13 @@
+variable "environment" {
+  type        = string
+  description = "Name of the environment, i.e. dev, stage, prod"
+}
+
+variable "namespace" {
+  type        = string
+  description = "Namespace of the project, i.e. arc"
+}
+
 variable "bedrock_agent_config" {
   type = object({
     create                      = optional(bool, false)
@@ -92,19 +102,29 @@ variable "tags" {
 
 variable "knowledge_base_config" {
   type = object({
-    create           = optional(bool, false)
-    name             = string
-    role_arn         = optional(string, null)
-    foundation_model = string
-    description      = optional(string, null)
-    data_storage_list = list(object({
+    create               = optional(bool, false)
+    name                 = string
+    role_arn             = optional(string, null)
+    foundation_model_arn = string
+    description          = optional(string, null)
+    agent_id             = optional(string, null)
+    instruction          = string
+    data_source_list = list(object({
+      type = optional(string, "S3")
+      s3_config = optional(object({
+        create             = optional(bool, false)
+        name               = string
+        inclusion_prefixes = optional(list(string), [])
+      }))
+    }))
+    data_storage_list = optional(list(object({
       type = optional(string, "S3")
       s3_config = optional(object({
         create = optional(bool, false)
         prefix = optional(string, "")
         name   = string
       }))
-    }))
+    })), [])
     embedding_model_configuration = object({
       dimensions          = optional(number, 1024)
       embedding_data_type = string
@@ -113,6 +133,7 @@ variable "knowledge_base_config" {
       type = optional(string, "OPENSEARCH_SERVERLESS")
       opensearch_serverless_configuration = object({
         create                      = optional(bool, false)
+        name                        = optional(string, null)
         collection_arn              = optional(string, null)
         access_policy_rules         = optional(list(any), [])
         data_lifecycle_policy_rules = optional(list(any), [])
@@ -138,9 +159,11 @@ variable "knowledge_base_config" {
   default = {
     create                        = false
     name                          = null
-    foundation_model              = null
+    instruction                   = null
+    foundation_model_arn          = null
     data_storage_list             = []
     embedding_model_configuration = null
     storage_configuration         = null
+    data_source_list              = []
   }
 }

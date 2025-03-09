@@ -93,9 +93,10 @@ module "collaborators" {
 
 module "knowledge_base" {
   source = "./modules/knowledge-base"
+  count  = var.knowledge_base_config.create ? 1 : 0
 
-  count = var.knowledge_base_config.create ? 1 : 0
-
-  knowledge_base_config = var.knowledge_base_config
+  namespace             = var.namespace
+  environment           = var.environment
+  knowledge_base_config = local.knowledge_base_config
   tags                  = var.tags
 }

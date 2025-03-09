@@ -56,7 +56,7 @@ resource "aws_bedrockagent_knowledge_base" "this" {
   role_arn = aws_iam_role.this[0].arn
   knowledge_base_configuration {
     vector_knowledge_base_configuration {
-      embedding_model_arn = "arn:aws:bedrock:${data.aws_region.current.name}::foundation-model/${var.knowledge_base_config.foundation_model}"
+      embedding_model_arn = var.knowledge_base_config.foundation_model_arn
 
       embedding_model_configuration {
         bedrock_embedding_model_configuration {
@@ -65,30 +65,30 @@ resource "aws_bedrockagent_knowledge_base" "this" {
         }
       }
 
-      supplemental_data_storage_configuration {
+      # supplemental_data_storage_configuration {
 
+      #   dynamic "storage_location" {
+      #     for_each = var.knowledge_base_config.data_storage_list
 
-        dynamic "storage_location" {
-          for_each = var.knowledge_base_config.data_storage_list
+      #     content {
+      #       type = storage_location.value.type
 
-          content {
-            type = storage_location.value.type
-
-            s3_location {
-              uri = "s3://${module.s3[storage_location.value.s3_config.name].bucket_id}/${storage_location.value.s3_config.prefix}"
-            }
-          }
-        }
-      }
+      #       s3_location {
+      #         uri = "s3://${module.s3[storage_location.value.s3_config.name].bucket_id}/${storage_location.value.s3_config.prefix}"
+      #       }
+      #     }
+      #   }
+      # }
 
 
     }
     type = "VECTOR"
+
   }
   storage_configuration {
     type = "OPENSEARCH_SERVERLESS"
     opensearch_serverless_configuration {
-      collection_arn    = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.collection_arn
+      collection_arn    = module.opensearch_serverless[0].opensearch_serverless_collection_arn
       vector_index_name = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.vector_index_name
       field_mapping {
         vector_field   = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.field_mapping.vector_field
@@ -97,4 +97,46 @@ resource "aws_bedrockagent_knowledge_base" "this" {
       }
     }
   }
+
+  depends_on = [opensearch_index.this]
 }
+
+
+resource "aws_bedrockagent_data_source" "this" {
+  knowledge_base_id = aws_bedrockagent_knowledge_base.this.id
+  name              = "${var.knowledge_base_config.name}-ds"
+
+  dynamic "data_source_configuration" {
+    for_each = var.knowledge_base_config.data_source_list
+    content {
+      type = "S3"
+      s3_configuration {
+        bucket_arn         = module.s3[data_source_configuration.value.s3_config.name].bucket_arn
+        inclusion_prefixes = data_source_configuration.value.s3_config.inclusion_prefixes
+      }
+    }
+  }
+}
+
+resource "aws_bedrockagent_agent_knowledge_base_association" "this" {
+  agent_id             = var.knowledge_base_config.agent_id
+  description          = var.knowledge_base_config.instruction
+  knowledge_base_id    = aws_bedrockagent_knowledge_base.this.id
+  knowledge_base_state = "ENABLED"
+
+}
+
+# resource "aws_bedrockagent_data_source" "this" {
+#   for_each          = { for idx, obj in var.knowledge_base_config.data_source_list : obj.s3_config.name => obj }
+#   knowledge_base_id = aws_bedrockagent_knowledge_base.this.id
+#   name              = "${var.knowledge_base_config.name}-ds"
+
+#   data_source_configuration {
+#     type = "S3"
+#     s3_configuration {
+#       bucket_arn         = module.s3[each.key].bucket_arn
+#       inclusion_prefixes = each.value.s3_config.inclusion_prefixes
+#     }
+
+#   }
+# }
