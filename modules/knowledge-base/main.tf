@@ -51,6 +51,12 @@ resource "aws_iam_role_policy" "s3_policy" {
   policy = data.aws_iam_policy_document.s3_access.json
 }
 
+## Add permission for KB to Agent
+resource "aws_iam_role_policy" "kb_permission" {
+  policy = data.aws_iam_policy_document.agent_permission.json
+  role   = var.knowledge_base_config.agent_role_name
+}
+
 resource "aws_bedrockagent_knowledge_base" "this" {
   name     = var.knowledge_base_config.name
   role_arn = aws_iam_role.this[0].arn
@@ -125,18 +131,3 @@ resource "aws_bedrockagent_agent_knowledge_base_association" "this" {
   knowledge_base_state = "ENABLED"
 
 }
-
-# resource "aws_bedrockagent_data_source" "this" {
-#   for_each          = { for idx, obj in var.knowledge_base_config.data_source_list : obj.s3_config.name => obj }
-#   knowledge_base_id = aws_bedrockagent_knowledge_base.this.id
-#   name              = "${var.knowledge_base_config.name}-ds"
-
-#   data_source_configuration {
-#     type = "S3"
-#     s3_configuration {
-#       bucket_arn         = module.s3[each.key].bucket_arn
-#       inclusion_prefixes = each.value.s3_config.inclusion_prefixes
-#     }
-
-#   }
-# }

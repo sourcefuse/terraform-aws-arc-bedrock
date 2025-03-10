@@ -39,6 +39,14 @@ data "aws_iam_policy_document" "agent_permissions" {
       "arn:${data.aws_partition.current.partition}:bedrock:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:agent-alias/*"
     ]
   }
+
+  statement {
+    actions = ["bedrock:GetAgentAlias", "bedrock:InvokeAgent"]
+    resources = [
+      "arn:${data.aws_partition.current.partition}:bedrock:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:agent/*",
+      "arn:${data.aws_partition.current.partition}:bedrock:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:agent-alias/*"
+    ]
+  }
 }
 
 data "aws_iam_policy_document" "collaborator_agent_permissions" {

@@ -12,7 +12,7 @@ locals {
         type = "S3"
         s3_config = {
           create             = true
-          name               = "arc-dev-knowledge-base"
+          name               = "arc-dev-knowledge-bases-1"
           inclusion_prefixes = ["data/"]
         }
       }
@@ -27,7 +27,7 @@ locals {
       type = "OPENSEARCH_SERVERLESS"
       opensearch_serverless_configuration = {
         create                      = true
-        name                        = "arc-dev-knowledge-base-os"
+        name                        = "arc-dev-knowledge-base-os-1"
         access_policy_rules         = []
         data_lifecycle_policy_rules = []
 

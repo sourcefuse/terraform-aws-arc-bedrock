@@ -41,6 +41,14 @@ module "s3" {
   tags = var.tags
 }
 
+
+// Workaround for  "Error: elastic: Error 401 (Unauthorized)""
+# resource "time_sleep" "wait_20_seconds" {
+#   depends_on = [module.opensearch_serverless]
+
+#   create_duration = "20s"
+# }
+
 resource "opensearch_index" "this" {
   count = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.create ? 1 : 0
 

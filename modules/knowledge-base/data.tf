@@ -52,3 +52,12 @@ data "aws_iam_policy_document" "s3_access" {
     resources = local._bucket_arn
   }
 }
+
+data "aws_iam_policy_document" "agent_permission" {
+  statement {
+    actions = ["bedrock:Retrieve"]
+    resources = [
+      aws_bedrockagent_knowledge_base.this.arn
+    ]
+  }
+}

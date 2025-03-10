@@ -105,6 +105,7 @@ variable "knowledge_base_config" {
     create               = optional(bool, false)
     name                 = string
     role_arn             = optional(string, null)
+    agent_role_name      = optional(string, null)
     foundation_model_arn = string
     description          = optional(string, null)
     agent_id             = optional(string, null)
