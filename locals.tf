@@ -5,11 +5,11 @@ locals {
 
   knowledge_base_config = merge(var.knowledge_base_config,
     {
-      agent_id = var.knowledge_base_config.agent_id == null ? aws_bedrockagent_agent.this[0].agent_id : var.knowledge_base_config.agent_id
+      agent_id = var.knowledge_base_config.agent_id == null ? try(aws_bedrockagent_agent.this[0].agent_id, null) : var.knowledge_base_config.agent_id
 
     },
     {
-      agent_role_name = var.knowledge_base_config.agent_role_name == null ? aws_iam_role.this[0].name : var.knowledge_base_config.agent_role_name
+      agent_role_name = var.knowledge_base_config.agent_role_name == null ? try(aws_bedrockagent_agent.this[0].agent_id, null) : var.knowledge_base_config.agent_role_name
 
     }
   )

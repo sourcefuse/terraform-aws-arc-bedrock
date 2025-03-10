@@ -42,6 +42,9 @@ module "tags" {
 module "bedrock_agent" {
   source = "../../"
 
+  namespace   = "arc"
+  environment = "dev"
+
   bedrock_agent_config = {
     create              = true
     name                = "arc-bedrock-agent"
@@ -71,6 +74,9 @@ module "bedrock_agent" {
 
 module "collaborator_agent_1" {
   source = "../../"
+
+  namespace   = "arc"
+  environment = "dev"
 
   for_each = { for idx, collaborator in local.collaborators : collaborator.name => collaborator }
 
