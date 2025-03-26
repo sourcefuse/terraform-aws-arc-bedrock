@@ -61,11 +61,11 @@ module "data_storage_s3" {
 
 
 // Workaround for  "Error: elastic: Error 401 (Unauthorized)""
-# resource "time_sleep" "wait_20_seconds" {
-#   depends_on = [module.opensearch_serverless]
+resource "time_sleep" "wait_20_seconds" {
+  depends_on = [module.opensearch_serverless]
 
-#   create_duration = "20s"
-# }
+  create_duration = "30s"
+}
 
 resource "opensearch_index" "this" {
   count = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.create ? 1 : 0
@@ -77,5 +77,5 @@ resource "opensearch_index" "this" {
   index_knn_algo_param_ef_search = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.index_config.index_knn_algo_param_ef_search
   mappings                       = var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.index_config.mappings == null ? local.opensearch_index_mapping : var.knowledge_base_config.storage_configuration.opensearch_serverless_configuration.index_config.mappings
   force_destroy                  = true
-  depends_on                     = [module.opensearch_serverless]
+  depends_on                     = [time_sleep.wait_20_seconds]
 }

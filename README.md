@@ -285,6 +285,7 @@ To see a full example, check out the [main.tf](https://github.com/sourcefuse/ter
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3, < 2.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0, < 6.0 |
 | <a name="requirement_opensearch"></a> [opensearch](#requirement\_opensearch) | 2.3.1 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | 0.13.0 |
 
 ## Providers
 

@@ -13,6 +13,10 @@ terraform {
       source  = "opensearch-project/opensearch"
       version = "2.3.1"
     }
+    time = {
+      source  = "hashicorp/time"
+      version = "0.13.0"
+    }
   }
 }
 
