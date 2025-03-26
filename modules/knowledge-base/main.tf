@@ -24,6 +24,8 @@ resource "aws_iam_role" "this" {
       }
     }]
   })
+
+  tags = var.tags
 }
 
 
@@ -43,12 +45,20 @@ resource "aws_iam_role_policy" "opensearch_policy" {
   policy = data.aws_iam_policy_document.opensearch_serverless_api.json
 }
 
-resource "aws_iam_role_policy" "s3_policy" {
+resource "aws_iam_role_policy" "data_source_s3_policy" {
   count = 1
-  name  = "${var.knowledge_base_config.name}-s3-access-policy"
+  name  = "${var.knowledge_base_config.name}-s3-access-source"
   role  = aws_iam_role.this[0].id
 
-  policy = data.aws_iam_policy_document.s3_access.json
+  policy = data.aws_iam_policy_document.data_source_s3_access.json
+}
+
+resource "aws_iam_role_policy" "data_storage_s3_policy" {
+  count = length(var.knowledge_base_config.data_storage_list) > 0 ? 1 : 0
+  name  = "${var.knowledge_base_config.name}-s3-access-storage"
+  role  = aws_iam_role.this[0].id
+
+  policy = data.aws_iam_policy_document.data_storage_s3_access.json
 }
 
 ## Add permission for KB to Agent
@@ -71,20 +81,20 @@ resource "aws_bedrockagent_knowledge_base" "this" {
         }
       }
 
-      # supplemental_data_storage_configuration {
+      supplemental_data_storage_configuration {
 
-      #   dynamic "storage_location" {
-      #     for_each = var.knowledge_base_config.data_storage_list
+        dynamic "storage_location" {
+          for_each = var.knowledge_base_config.data_storage_list
 
-      #     content {
-      #       type = storage_location.value.type
+          content {
+            type = storage_location.value.type
 
-      #       s3_location {
-      #         uri = "s3://${module.s3[storage_location.value.s3_config.name].bucket_id}/${storage_location.value.s3_config.prefix}"
-      #       }
-      #     }
-      #   }
-      # }
+            s3_location {
+              uri = "s3://${module.data_storage_s3[storage_location.value.s3_config.name].bucket_id}/${storage_location.value.s3_config.prefix}"
+            }
+          }
+        }
+      }
 
 
     }
@@ -105,6 +115,8 @@ resource "aws_bedrockagent_knowledge_base" "this" {
   }
 
   depends_on = [opensearch_index.this]
+
+  tags = var.tags
 }
 
 
@@ -117,7 +129,7 @@ resource "aws_bedrockagent_data_source" "this" {
     content {
       type = "S3"
       s3_configuration {
-        bucket_arn         = module.s3[data_source_configuration.value.s3_config.name].bucket_arn
+        bucket_arn         = module.data_source_s3[data_source_configuration.value.s3_config.name].bucket_arn
         inclusion_prefixes = data_source_configuration.value.s3_config.inclusion_prefixes
       }
     }

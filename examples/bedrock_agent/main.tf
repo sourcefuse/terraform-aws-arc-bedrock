@@ -38,7 +38,7 @@ module "tags" {
 }
 
 
-// This created Bedrock Superviset Agent and a Colloborator Agent
+// This creates Bedrock Superviset Agent and a Colloborator Agent
 module "bedrock_agent" {
   source = "../../"
 
@@ -53,7 +53,6 @@ module "bedrock_agent" {
     agent_collaboration = "SUPERVISOR"
     prepare_agent       = false
     description         = "Supervisor agent"
-    //alias_name          = "arc-bedrock-agent-alias"
   }
   agent_collaborator = {
     name                        = "collab-1"

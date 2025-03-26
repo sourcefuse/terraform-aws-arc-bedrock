@@ -264,13 +264,13 @@ terraform plan -var-file prod.tfvars
 
 Apply Terraform
 ```shell
-terraform apply -var-file prod.tfvars  
+terraform apply -var-file prod.tfvars  -parallelism=1
 ```
 
 ## Cleanup  
 Destroy Terraform
 ```shell
-terraform destroy -var-file dev.tfvars
+terraform destroy -var-file dev.tfvars -parallelism=1
 ```
 
 ## Module Usage

@@ -29,18 +29,21 @@ data "aws_iam_policy_document" "opensearch_serverless_api" {
 }
 
 locals {
-  bucket_arns = [for s in module.s3 : s.bucket_arn]
-  _bucket_arn = [for s in module.s3 : "${s.bucket_arn}/*"]
+  data_source_bucket_arns = [for s in module.data_source_s3 : s.bucket_arn]
+  _data_source_bucket_arn = [for s in module.data_source_s3 : "${s.bucket_arn}/*"]
+
+  data_storage_bucket_arns = [for s in module.data_storage_s3 : s.bucket_arn]
+  _data_storage_bucket_arn = [for s in module.data_storage_s3 : "${s.bucket_arn}/*"]
 }
 
-data "aws_iam_policy_document" "s3_access" {
+data "aws_iam_policy_document" "data_source_s3_access" {
   statement {
     sid    = "S3ListBucketStatement"
     effect = "Allow"
     actions = [
       "s3:ListBucket"
     ]
-    resources = local.bucket_arns
+    resources = local.data_source_bucket_arns
   }
 
   statement {
@@ -49,7 +52,30 @@ data "aws_iam_policy_document" "s3_access" {
     actions = [
       "s3:GetObject"
     ]
-    resources = local._bucket_arn
+    resources = local._data_source_bucket_arn
+  }
+}
+
+data "aws_iam_policy_document" "data_storage_s3_access" {
+  statement {
+    sid    = "S3ListBucketStatement"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket"
+    ]
+    resources = local.data_storage_bucket_arns
+  }
+
+  statement {
+    sid    = "S3GetObjectStatement"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject"
+
+    ]
+    resources = local._data_storage_bucket_arn
   }
 }
 

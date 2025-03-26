@@ -18,6 +18,18 @@ locals {
       }
     ]
 
+    data_storage_list = [
+      {
+        type = "S3"
+        s3_config = {
+          create = true
+          prefix = "data"
+          name   = "arc-dev-knowledge-bases-storage"
+        }
+      }
+    ]
+
+
     embedding_model_configuration = {
       dimensions          = 1024
       embedding_data_type = "FLOAT32"

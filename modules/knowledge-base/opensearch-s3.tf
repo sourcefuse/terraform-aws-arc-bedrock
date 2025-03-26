@@ -3,10 +3,17 @@
 ##################################################
 
 locals {
-  s3_list = { for idx, obj in var.knowledge_base_config.data_source_list : obj.s3_config.name => {
+  data_source_s3_list = { for idx, obj in var.knowledge_base_config.data_source_list : obj.s3_config.name => {
     name = obj.s3_config.name
     }
   if obj.type == "S3" && obj.s3_config.create }
+
+  data_storage_s3_list = { for idx, obj in var.knowledge_base_config.data_storage_list : obj.s3_config.name => {
+    name = obj.s3_config.name
+    }
+  if obj.type == "S3" && obj.s3_config.create }
+
+
 }
 
 # ##################################################
@@ -30,11 +37,22 @@ module "opensearch_serverless" {
   tags                        = var.tags
 }
 
-module "s3" {
+module "data_source_s3" {
   source  = "sourcefuse/arc-s3/aws"
   version = "0.0.4"
 
-  for_each = local.s3_list
+  for_each = local.data_source_s3_list
+
+  name = each.key
+  acl  = "private"
+  tags = var.tags
+}
+
+module "data_storage_s3" {
+  source  = "sourcefuse/arc-s3/aws"
+  version = "0.0.4"
+
+  for_each = local.data_storage_s3_list
 
   name = each.key
   acl  = "private"

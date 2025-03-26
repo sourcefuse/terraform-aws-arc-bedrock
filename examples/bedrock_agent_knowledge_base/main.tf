@@ -37,7 +37,6 @@ module "tags" {
   }
 }
 
-// This created Bedrock Superviset Agent and a Colloborator Agent
 module "bedrock_agent" {
   source = "../../"
 
